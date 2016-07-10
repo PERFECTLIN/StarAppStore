@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/navi_xingmingpian"
+            android:title="@string/xingmingpian" />
+        <item
+            android:id="@+id/xingyin"
+            android:title="@string/xingyin" />
+        <item
+            android:id="@+id/xingyi"
+            android:title="@string/xingyi" />
+        <item
+            android:id="@+id/xingjian1"
+            android:title="@string/xingjian" />
+
+    </group>
+
+</menu>
