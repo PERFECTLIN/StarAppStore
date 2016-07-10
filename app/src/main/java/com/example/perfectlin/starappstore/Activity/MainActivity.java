@@ -1,7 +1,9 @@
-package com.example.perfectlin.starappstore;
+package com.example.perfectlin.starappstore.Activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.perfectlin.starappstore.R;
 
 public class MainActivity extends AppCompatActivity {
 
