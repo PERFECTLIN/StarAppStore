@@ -6,17 +6,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.example.perfectlin.starappstore.Activity.Thread.HttpConnectionThread;
+import com.example.perfectlin.starappstore.Activity.Thread.GetFirJsonThread;
 import com.example.perfectlin.starappstore.Activity.Utils.Key;
 
 
 public class CoverFlowSampleAdapter extends CoverFlowAdapter {
 
-    private Bitmap[] bitmaps = HttpConnectionThread.bitmaps;
+    private Bitmap[] bitmaps = GetFirJsonThread.bitmaps;
+    private TextView tv_name,tv_desc;
 
     public CoverFlowSampleAdapter() {
         System.out.println("------------------>进入Adapter");
+    }
+    public CoverFlowSampleAdapter(TextView tv_name,TextView tv_desc) {
+        this.tv_name=tv_name;
+        this.tv_desc=tv_desc;
+
+//      设置第一次打开获取数据更新界面
+        String name = GetFirJsonThread.firAppListBeanList.get(0).getName();
+        String desc=GetFirJsonThread.APP_DESC[0];
+        tv_name.setText(name);
+        tv_desc.setText(desc);
     }
 
     @Override
@@ -70,7 +82,6 @@ public class CoverFlowSampleAdapter extends CoverFlowAdapter {
 
 
             this.addView(this.imageView);
-            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++添加view成功");
 
         }
 
