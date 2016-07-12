@@ -11,9 +11,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.example.perfectlin.starappstore.Activity.Adapter.CoverFlow;
-import com.example.perfectlin.starappstore.Activity.Thread.HttpConnectionThread;
+import com.example.perfectlin.starappstore.Activity.Thread.GetFirJsonThread;
 import com.example.perfectlin.starappstore.Activity.Utils.Key;
 import com.example.perfectlin.starappstore.R;
 
@@ -22,27 +23,30 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerlayout;
     private NavigationView navigationview;
     private CoverFlow fancyCoverFlow;
-    private Handler handler=new Handler();
+    private Handler handler = new Handler();
+    private TextView tv_name, tv_desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initTextView();
         initToolbar(); //初始化toolbar
         initNavigation(); //初始化Navigation
         initCoverFlow(); //初始化CoverFlow
 
+    }
 
+    private void initTextView() {
+        tv_name = (TextView) findViewById(R.id.activity_main_appname);
+        tv_desc = (TextView) findViewById(R.id.activity_main_appdesc);
     }
 
     private void initCoverFlow() {
-        setupFlowWidthAndHeight();
-        this.fancyCoverFlow = (CoverFlow)findViewById(R.id.activity_main_coverflow);
-
-        new HttpConnectionThread(Key.REQUEST_URL,fancyCoverFlow,handler).start();  //开启线程解析Json数据
-
-
+        setupFlowWidthAndHeight(); //设置CoverFlow的图片大小
+        this.fancyCoverFlow = (CoverFlow) findViewById(R.id.activity_main_coverflow);
+        new GetFirJsonThread(fancyCoverFlow, handler, this,tv_name,tv_desc).start();  //开启线程解析Json数据和加载CoverFlow图片
     }
 
     private void setupFlowWidthAndHeight() {
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case android.R.id.home: //点击菜单打开drawer
                 drawerlayout.openDrawer(GravityCompat.START);
         }
         return super.onOptionsItemSelected(item);
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        //设置menu菜单
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_toolbar, menu);
         return super.onCreateOptionsMenu(menu);
