@@ -1,37 +1,32 @@
 package com.example.perfectlin.starappstore.Activity.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.perfectlin.starappstore.Activity.Thread.HttpConnectionThread;
 import com.example.perfectlin.starappstore.Activity.Utils.Key;
-import com.example.perfectlin.starappstore.R;
 
 
 public class CoverFlowSampleAdapter extends CoverFlowAdapter {
 
-    int a;
-    // =============================================================================
-    // Private members
-    // =============================================================================
+    private Bitmap[] bitmaps = HttpConnectionThread.bitmaps;
 
-    private int[] images = {R.mipmap.s01, R.mipmap.s02, R.mipmap.s03, R.mipmap.s04,
-            R.mipmap.s05, R.mipmap.s06, R.mipmap.s07, R.mipmap.s08};
-
-    // =============================================================================
-    // Supertype overrides
-    // =============================================================================
-
-    @Override
-    public int getCount() {
-        return images.length;
+    public CoverFlowSampleAdapter() {
+        System.out.println("------------------>进入Adapter");
     }
 
     @Override
-    public Integer getItem(int i) {
-        return images[i];
+    public int getCount() {
+        return bitmaps.length;
+    }
+
+    @Override
+    public Bitmap getItem(int i) {
+        return bitmaps[i];
     }
 
     @Override
@@ -41,19 +36,17 @@ public class CoverFlowSampleAdapter extends CoverFlowAdapter {
 
     @Override
     public View getCoverFlowItem(int i, View reuseableView, ViewGroup viewGroup) {
+
         CustomViewGroup customViewGroup = null;
 
         if (reuseableView != null) {
             customViewGroup = (CustomViewGroup) reuseableView;
-            System.out.println("+++++++++++++++++++++++++++++++++++++++!null");
         } else {
-            System.out.println("+++++++++++++++++++++++++++++++++++++++null");
             customViewGroup = new CustomViewGroup(viewGroup.getContext());
             customViewGroup.setLayoutParams(new CoverFlow.LayoutParams(Key.CoverFlow_Width, Key.CoverFlow_height));//图片高度
         }
 
-        customViewGroup.getImageView().setImageResource(this.getItem(i));
-        System.out.println("ppppppp"+customViewGroup.getImageView().getDrawable().toString());
+        customViewGroup.getImageView().setImageBitmap(this.getItem(i));
 //        customViewGroup.getTextView().setText(String.format("Item %d", i));
 //        int pos=customViewGroup.getPos().String.format("Item %d", i);
 
