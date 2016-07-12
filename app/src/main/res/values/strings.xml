@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">StarAppStore</string>
+    <string name="app_name">星应用</string>
+    <string name="xingmingpian">星名片</string>
+    <string name="xingyi">星忆</string>
+    <string name="xingyin">猩印</string>
+    <string name="xingjian">星笺</string>
 </resources>
