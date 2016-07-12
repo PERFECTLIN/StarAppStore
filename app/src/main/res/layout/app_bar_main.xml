@@ -54,8 +54,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="星忆1"
-                android:textSize="24sp" />
+                android:text="星名片"
+                android:textSize="23sp" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us星空学生创新中心www.xingkong.us"
-                    android:textSize="20sp" />
+                    android:textSize="19sp" />
             </ScrollView>
         </LinearLayout>
     </android.support.v7.widget.CardView>
@@ -80,5 +80,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/green"
+            android:layout_margin="16dp"
             android:text="下载" />
 </LinearLayout>
