@@ -4,10 +4,8 @@
     <item
         android:id="@+id/navi_xingmingpian"
         android:icon="@mipmap/ic_aboutme"
-        app:showAsAction="always"
         android:title="关于我们"
-        />
-
+        app:showAsAction="always" />
 
 
 </menu>

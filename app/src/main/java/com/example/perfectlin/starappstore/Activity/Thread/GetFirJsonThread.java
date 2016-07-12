@@ -146,16 +146,6 @@ public class GetFirJsonThread extends Thread {
 
             }
         });
-//        fancyCoverFlow.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-//            @Override
-//            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-////                                Toast.makeText(context, "i=" + i + "i1=" + i1 + "i2=" + i2 + "i3=" + i3, Toast.LENGTH_LONG).show();
-//                String name = APP_NAME[i];
-//                String desc = APP_DESC[i];
-//                tv_name.setText(name);
-//                tv_desc.setText(desc);
-//            }
-//        });
 
     }
 

@@ -1,5 +1,7 @@
 package com.example.perfectlin.starappstore.Activity;
 
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -10,7 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.perfectlin.starappstore.Activity.Adapter.CoverFlow;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private CoverFlow fancyCoverFlow;
     private Handler handler = new Handler();
     private TextView tv_name, tv_desc;
+    private MenuItem menuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         initTextView();
         initToolbar(); //初始化toolbar
-        initNavigation(); //初始化Navigation
         initCoverFlow(); //初始化CoverFlow
+        initNavigation(); //初始化Navigation
 
     }
 
@@ -46,14 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private void initCoverFlow() {
         setupFlowWidthAndHeight(); //设置CoverFlow的图片大小
         this.fancyCoverFlow = (CoverFlow) findViewById(R.id.activity_main_coverflow);
-        new GetFirJsonThread(fancyCoverFlow, handler, this,tv_name,tv_desc).start();  //开启线程解析Json数据和加载CoverFlow图片
+        new GetFirJsonThread(fancyCoverFlow, handler, this, tv_name, tv_desc).start();  //开启线程解析Json数据和加载CoverFlow图片
     }
 
     private void setupFlowWidthAndHeight() {
         WindowManager wm = this.getWindowManager();
         int width = wm.getDefaultDisplay().getWidth();
         int height = wm.getDefaultDisplay().getHeight();
-        Key.CoverFlow_height = height * 2 / 8;
+        Key.CoverFlow_height = height * 2 / 10;
         Key.CoverFlow_Width = width * 2 / 4;
     }
 
@@ -68,6 +73,22 @@ public class MainActivity extends AppCompatActivity {
             navigationview.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem item) {
+                    if (item.getTitle().equals("星名片")) {
+                        fancyCoverFlow.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> adapterView) {
+//                                fancyCoverFlow.
+                            }
+                        });
+                    } else if (item.getTitle().equals("猩印")) {
+                    } else if (item.getTitle().equals("星忆")) {
+                    } else if (item.getTitle().equals("星笺")) {
+                    }
                     return false;
                 }
             });
@@ -85,6 +106,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home: //点击菜单打开drawer
                 drawerlayout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.navi_xingmingpian:
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -94,6 +120,10 @@ public class MainActivity extends AppCompatActivity {
         //设置menu菜单
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_toolbar, menu);
+//        for (int i=0;i<GetFirJsonThread.APP_NAME.length;i++)
+//        {
+//            menu.add(0,i,i,GetFirJsonThread.APP_NAME[i]);
+//        }
         return super.onCreateOptionsMenu(menu);
 
     }
