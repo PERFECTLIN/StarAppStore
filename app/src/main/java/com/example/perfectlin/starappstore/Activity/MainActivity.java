@@ -1,5 +1,8 @@
 package com.example.perfectlin.starappstore.Activity;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -10,8 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.perfectlin.starappstore.Activity.Adapter.CoverFlow;
 import com.example.perfectlin.starappstore.Activity.Thread.GetFirJsonThread;
@@ -25,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private CoverFlow fancyCoverFlow;
     private Handler handler = new Handler();
     private TextView tv_name, tv_desc;
+    private MenuItem menuItem;
+    private Button bt_download;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +41,26 @@ public class MainActivity extends AppCompatActivity {
 
         initTextView();
         initToolbar(); //初始化toolbar
-        initNavigation(); //初始化Navigation
         initCoverFlow(); //初始化CoverFlow
+        initNavigation(); //初始化Navigation
+        initDownloadButton();
 
+    }
+
+    private void initDownloadButton() {
+        bt_download = (Button) findViewById(R.id.activity_main_download);
+
+        bt_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = fancyCoverFlow.getSelectedItemPosition();
+                /**
+                 *    下面是获取对应的app的url
+                 *    String url=GetFirJsonThread.APP_DOWNLOAD_URL[pos];
+                 */
+
+            }
+        });
     }
 
     private void initTextView() {
@@ -46,14 +71,14 @@ public class MainActivity extends AppCompatActivity {
     private void initCoverFlow() {
         setupFlowWidthAndHeight(); //设置CoverFlow的图片大小
         this.fancyCoverFlow = (CoverFlow) findViewById(R.id.activity_main_coverflow);
-        new GetFirJsonThread(fancyCoverFlow, handler, this,tv_name,tv_desc).start();  //开启线程解析Json数据和加载CoverFlow图片
+        new GetFirJsonThread(fancyCoverFlow, handler, this, tv_name, tv_desc).start();  //开启线程解析Json数据和加载CoverFlow图片
     }
 
     private void setupFlowWidthAndHeight() {
         WindowManager wm = this.getWindowManager();
         int width = wm.getDefaultDisplay().getWidth();
         int height = wm.getDefaultDisplay().getHeight();
-        Key.CoverFlow_height = height * 2 / 8;
+        Key.CoverFlow_height = height * 2 / 10;
         Key.CoverFlow_Width = width * 2 / 4;
     }
 
@@ -66,8 +91,19 @@ public class MainActivity extends AppCompatActivity {
         //设置navi点击回调
         if (navigationview != null) {
             navigationview.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @TargetApi(Build.VERSION_CODES.M)
                 @Override
                 public boolean onNavigationItemSelected(MenuItem item) {
+                    //如果要实现自动化就要循环APP_NAME来
+                    if (item.getTitle().equals("星名片")) {
+                        drawerlayout.closeDrawers();
+                    } else if (item.getTitle().equals("猩印")) {
+                        drawerlayout.closeDrawers();
+                    } else if (item.getTitle().equals("星忆")) {
+                        drawerlayout.closeDrawers();
+                    } else if (item.getTitle().equals("星笺")) {
+                        drawerlayout.closeDrawers();
+                    }
                     return false;
                 }
             });
@@ -85,6 +121,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home: //点击菜单打开drawer
                 drawerlayout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.navi_xingmingpian:
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -94,6 +135,10 @@ public class MainActivity extends AppCompatActivity {
         //设置menu菜单
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_toolbar, menu);
+//        for (int i=0;i<GetFirJsonThread.APP_NAME.length;i++)
+//        {
+//            menu.add(0,i,i,GetFirJsonThread.APP_NAME[i]);
+//        }
         return super.onCreateOptionsMenu(menu);
 
     }
