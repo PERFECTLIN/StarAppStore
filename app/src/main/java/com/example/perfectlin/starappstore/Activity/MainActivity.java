@@ -1,7 +1,11 @@
 package com.example.perfectlin.starappstore.Activity;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,14 +19,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.dd.CircularProgressButton;
 import com.example.perfectlin.starappstore.Activity.Adapter.CoverFlow;
 import com.example.perfectlin.starappstore.Activity.Thread.GetFirJsonThread;
 import com.example.perfectlin.starappstore.Activity.Utils.Key;
+import com.example.perfectlin.starappstore.Activity.entities.FileInfo;
+import com.example.perfectlin.starappstore.Activity.services.AppInfoService;
+import com.example.perfectlin.starappstore.Activity.services.DownloadService;
 import com.example.perfectlin.starappstore.R;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -31,26 +39,45 @@ public class MainActivity extends AppCompatActivity {
     private CoverFlow fancyCoverFlow;
     private Handler handler = new Handler();
     private TextView tv_name, tv_desc;
-    private MenuItem menuItem;
-    private Button bt_download;
+    CircularProgressButton download;
+    int setup=1;
+    ArrayList arrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         initTextView();
         initToolbar(); //初始化toolbar
         initCoverFlow(); //初始化CoverFlow
         initNavigation(); //初始化Navigation
         initDownloadButton();
+        regist_broadcast();//注册广播
+        int position = fancyCoverFlow.getSelectedItemPosition();
 
     }
 
-    private void initDownloadButton() {
-        bt_download = (Button) findViewById(R.id.activity_main_download);
+    private void regist_broadcast() {
+        //注册广播播放器
+        IntentFilter filter=new IntentFilter();
+        filter.addAction(DownloadService.ACTION_UPPDATE);
+        filter.addAction(DownloadService.ACTION_OK);
+        filter.addAction(DownloadService.ACTION_STOP);
+        filter.addAction(AppInfoService.APP_NAME);
+        registerReceiver(mReceiver,filter);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+    }
 
-        bt_download.setOnClickListener(new View.OnClickListener() {
+    private void initDownloadButton() {
+       download= (CircularProgressButton) findViewById(R.id.progressbar);
+
+        download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int pos = fancyCoverFlow.getSelectedItemPosition();
@@ -58,20 +85,97 @@ public class MainActivity extends AppCompatActivity {
                  *    下面是获取对应的app的url
                  *    String url=GetFirJsonThread.APP_DOWNLOAD_URL[pos];
                  */
+                String url=GetFirJsonThread.APP_DOWNLOAD_URL[pos];
+                String name=GetFirJsonThread.APP_NAME[pos];
+                AppInfoService app=new AppInfoService(MainActivity.this);
+                app.getAppInfos();   //获取app名字
+                if (app.pipei(name)){
+                //创建文件信息
+                    final FileInfo fileInfo=new FileInfo(0,url,name+".apk",0,0);
+
+                    switch (setup){
+                        case 1:
+                            Intent intent = new Intent(MainActivity.this, DownloadService.class);
+                            intent.setAction(DownloadService.ACTION_SARET);
+                            intent.putExtra("fileInfo", fileInfo);
+                            System.out.println("");
+                            download.setText("下载");
+                            startService(intent);//点击下载
+                            setup = setup * -1;
+                        case -1:
+                            Intent intent2 = new Intent(MainActivity.this, DownloadService.class);
+                            intent2.setAction(DownloadService.ACTION_STOP);
+                            intent2.putExtra("fileInfo", fileInfo);
+                            startService(intent2);
+                            setup = setup * -1;
+                            System.out.println("点击暂停下载");
+//                        case 2:
+//                            System.out.println("点击安装");
+//                            Intent i = new Intent(Intent.ACTION_VIEW);
+//                            String filePath = DownloadService.DOWNLOAD_PATH + fileInfo.getFileName();
+//                            i.setDataAndType(Uri.parse("file://" + filePath), "application/vnd.android.package-archive");
+//                            MainActivity.this.startActivity(i);
+                    }
+
+
+                }else{
+                    download.setText("已安装");
+                    System.out.println("ppppppppppppppp已安装");
+                }
 
             }
         });
     }
+    //更新UI广播播放器
+    BroadcastReceiver mReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("--------------------》开始接受返回Activite信息");
+            if(DownloadService.ACTION_UPPDATE.equals(intent.getAction())){
+                int  finish=intent.getIntExtra("finished",0);
+                System.out.println("--------------------》正在接受返回Activite信息");
+                download.setProgress(finish);
+                System.out.println("======================>下载量"+finish);
+
+            }
+            if(DownloadService.ACTION_OK.equals(intent.getAction())){
+                int ok=intent.getIntExtra("OK",0);
+                System.out.println("======================>最终下载量"+ok);
+                String a=intent.getStringExtra("file_name");
+                if(ok==100){
+                    download.setProgress(ok);
+//                    download.setText("安装");
+//                    setup=2; //安装
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    String filePath = DownloadService.DOWNLOAD_PATH + a;
+                    i.setDataAndType(Uri.parse("file://" + filePath), "application/vnd.android.package-archive");
+                    MainActivity.this.startActivity(i);
+
+                }
+            }
+
+
+        }
+    };
 
     private void initTextView() {
         tv_name = (TextView) findViewById(R.id.activity_main_appname);
         tv_desc = (TextView) findViewById(R.id.activity_main_appdesc);
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private void initCoverFlow() {
         setupFlowWidthAndHeight(); //设置CoverFlow的图片大小
         this.fancyCoverFlow = (CoverFlow) findViewById(R.id.activity_main_coverflow);
         new GetFirJsonThread(fancyCoverFlow, handler, this, tv_name, tv_desc).start();  //开启线程解析Json数据和加载CoverFlow图片
+        fancyCoverFlow.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+                download.setText("下载");
+            }
+        });
+
+
     }
 
     private void setupFlowWidthAndHeight() {
@@ -80,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
         int height = wm.getDefaultDisplay().getHeight();
         Key.CoverFlow_height = height * 2 / 10;
         Key.CoverFlow_Width = width * 2 / 4;
+
+
     }
 
 
