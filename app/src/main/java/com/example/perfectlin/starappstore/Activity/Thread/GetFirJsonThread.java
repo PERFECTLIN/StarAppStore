@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -51,7 +52,7 @@ public class GetFirJsonThread extends Thread {
     public static Bitmap[] bitmaps;
     public static List<FirAppListBean> firAppListBeanList;
     public static List<FirAppBean> firAppBeanList;
-    public static String[] APP_NAME, APP_DESC;
+    public static String[] APP_NAME, APP_DESC, APP_DOWNLOAD_TOKEN, APP_DOWNLOAD_URL;
 
     public GetFirJsonThread(CoverFlow fancyCoverFlow, Handler handler, Context context, TextView tv_name, TextView tv_desc) {
         this.fancyCoverFlow = fancyCoverFlow;
@@ -64,6 +65,73 @@ public class GetFirJsonThread extends Thread {
     @Override
     public void run() {
         dealJson(); //开始解析Json
+        dealDownloadJson();
+    }
+
+    private void dealDownloadJson() {
+        APP_DOWNLOAD_TOKEN = new String[firAppListBeanList.size()];
+        for (int i = 0; i < firAppListBeanList.size(); i++) {
+            try {
+                URL downloadTokenUrl = new URL(Key.FIR_GET_DOWNLOAD_TOKEN_URL + firAppListBeanList.get(i).getId() + "/download_token?api_token=" + Key.FIR_API_TOKEN);
+                HttpURLConnection conn = (HttpURLConnection) downloadTokenUrl.openConnection();
+                conn.setReadTimeout(5000);
+                conn.setRequestMethod("GET");
+                if (conn.getResponseCode() == 200) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuffer sb = new StringBuffer();
+                    String str;
+                    while ((str = br.readLine()) != null) {
+                        sb.append(str);
+                    }
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(sb.toString());
+                        APP_DOWNLOAD_TOKEN[i] = jsonObject.getString("download_token");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    //开启线程更新UI
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, "下载连接网络请求异常", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
+                //用post方式请求app下载地址
+                APP_DOWNLOAD_URL=new String[firAppListBeanList.size()];
+                for (int j = 0; j < firAppListBeanList.size(); j++) {
+                    URL downloadUrl = new URL("http://download.fir.im/apps/" + APP_ID[j] + "/install");
+                    HttpURLConnection conn1 = (HttpURLConnection) downloadUrl.openConnection();
+                    conn1.setReadTimeout(5000);
+                    conn1.setRequestMethod("POST");
+                    OutputStream out = conn1.getOutputStream();
+                    String content = "download_token=" + APP_DOWNLOAD_TOKEN[j];
+                    out.write(content.getBytes());
+                    BufferedReader br1 = new BufferedReader(new InputStreamReader(conn1.getInputStream()));
+                    String str1;
+                    StringBuffer sb1 = new StringBuffer();
+                    while ((str1 = br1.readLine()) != null) {
+                        sb1.append(str1);
+                    }
+                    try {
+                        JSONObject jsonObject = new JSONObject(sb1.toString());
+                        APP_DOWNLOAD_URL[j] = jsonObject.getString("url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void dealJson() {
@@ -139,6 +207,7 @@ public class GetFirJsonThread extends Thread {
                 String desc = APP_DESC[i];
                 tv_name.setText(name);
                 tv_desc.setText(desc);
+                Toast.makeText(context, "---->" + fancyCoverFlow.getId(), Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -187,21 +256,20 @@ public class GetFirJsonThread extends Thread {
             APP_ID[i] = firAppListBeanList.get(i).getId();
         }
 
-        APP_DESC=new String[firAppListBeanList.size()];
+        APP_DESC = new String[firAppListBeanList.size()];
         dealAppJson();//处理应用的Json信息
     }
 
     private void dealAppJson() {
-        for (int i=0;i<firAppListBeanList.size();i++)
-        {
+        for (int i = 0; i < firAppListBeanList.size(); i++) {
             try {
-                String url=Key.FIR_APP_GET_API+APP_ID[i]+"?api_token="+Key.FIR_API_TOKEN;
-                System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmurl"+url);
-                URL firAppUrl=new URL(Key.FIR_APP_GET_API+APP_ID[i]+"?api_token="+Key.FIR_API_TOKEN);
-                HttpURLConnection conn= (HttpURLConnection) firAppUrl.openConnection();
+                String url = Key.FIR_APP_GET_API + APP_ID[i] + "?api_token=" + Key.FIR_API_TOKEN;
+                System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmurl" + url);
+                URL firAppUrl = new URL(Key.FIR_APP_GET_API + APP_ID[i] + "?api_token=" + Key.FIR_API_TOKEN);
+                HttpURLConnection conn = (HttpURLConnection) firAppUrl.openConnection();
                 conn.setRequestMethod("GET");
-                System.out.println("mmmmmmmmmmmmmmmmCODE"+conn.getResponseCode());
-                if (conn.getResponseCode()==200){
+                System.out.println("mmmmmmmmmmmmmmmmCODE" + conn.getResponseCode());
+                if (conn.getResponseCode() == 200) {
 
                     BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     String str;
@@ -213,15 +281,14 @@ public class GetFirJsonThread extends Thread {
 
                     try {
                         //取出app对象的app描述
-                        JSONObject jsonObject=new JSONObject(sb1.toString());
-                        String desc=jsonObject.getString("desc");
-                        APP_DESC[i]=desc;
+                        JSONObject jsonObject = new JSONObject(sb1.toString());
+                        String desc = jsonObject.getString("desc");
+                        APP_DESC[i] = desc;
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("mmmmmmmmmmmmmmmm"+APP_DESC[i]);
-                }
-                else {
+                    System.out.println("mmmmmmmmmmmmmmmm" + APP_DESC[i]);
+                } else {
                     //开启线程更新UI
                     handler.post(new Runnable() {
                         @Override

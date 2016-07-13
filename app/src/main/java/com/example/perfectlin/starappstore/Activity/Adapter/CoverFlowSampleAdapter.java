@@ -91,4 +91,5 @@ public class CoverFlowSampleAdapter extends CoverFlowAdapter {
 
 
     }
+
 }

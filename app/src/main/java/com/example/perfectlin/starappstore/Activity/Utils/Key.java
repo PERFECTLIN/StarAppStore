@@ -10,5 +10,7 @@ public class Key {
     public static String FIR_API_TOKEN = "cd8d74030d27a02724735e5aef9feb75";
     public static String FIR_APP_GET_API = "http://api.fir.im/apps/";
     public static String FIR_APPLIST_GET_API = "http://api.fir.im/apps?api_token=" + FIR_API_TOKEN;
+    public static String FIR_GET_DOWNLOAD_TOKEN_URL="http://api.fir.im/apps/";
+    public static String FIR_POST_DOWNLOAD_APP_URL="http://download.fir.im/apps/";
 
 }
