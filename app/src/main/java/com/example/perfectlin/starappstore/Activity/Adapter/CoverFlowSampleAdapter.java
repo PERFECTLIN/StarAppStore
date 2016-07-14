@@ -80,6 +80,8 @@ public class CoverFlowSampleAdapter extends CoverFlowAdapter {
 //            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             this.imageView.setAdjustViewBounds(true);
 
+//            CircularProgressButton download= (CircularProgressButton) findViewById(R.id.progressbar);
+//            download.setText("下载");
 
             this.addView(this.imageView);
 
