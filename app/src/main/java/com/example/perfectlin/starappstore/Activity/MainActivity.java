@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.perfectlin.starappstore.Activity.Adapter.CoverFlow;
 import com.example.perfectlin.starappstore.Activity.Thread.GetFirJsonThread;
