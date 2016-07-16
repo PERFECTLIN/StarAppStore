@@ -12,5 +12,8 @@ public class Key {
     public static String FIR_APPLIST_GET_API = "http://api.fir.im/apps?api_token=" + FIR_API_TOKEN;
     public static String FIR_GET_DOWNLOAD_TOKEN_URL="http://api.fir.im/apps/";
     public static String FIR_POST_DOWNLOAD_APP_URL="http://download.fir.im/apps/";
+    public static String [] APP_SHUZU={"37d9bd6c5c90cd871210002f0cc31f02","1cf073902ffae9a35b215967b29131d4"
+    ,"e1f5431816f7ad40687d8c10254907e8","b2a19421df8ffd1b692cf47156375d18"};
+    public static String []APP_NAME={"猩印","星名片","星笺","星忆"};
 
 }

@@ -1,10 +1,9 @@
 package com.example.perfectlin.starappstore.Activity.services;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 
 import com.example.perfectlin.starappstore.Activity.entities.AppInfo;
 
@@ -22,11 +21,14 @@ public class AppInfoService {
     String appName;
     ArrayList arrayList=new ArrayList();
     String name_shuzu[];
+    SharedPreferences sp=null;
+    SharedPreferences.Editor editor;
 
     public AppInfoService(Context context) {
         // TODO Auto-generated constructor stub
         this.context = context;
         this.appName=appName;
+
 
         pm = context.getPackageManager();
     }
@@ -60,30 +62,31 @@ public class AppInfoService {
 
 
             //获取应用程序的图标
-            Drawable app_icon = info.loadIcon(pm);
-            appInfo.setApp_icon(app_icon);
+//            Drawable app_icon = info.loadIcon(pm);
+//            appInfo.setApp_icon(app_icon);
 
             //获取应用的名称
             String app_name = info.loadLabel(pm).toString();
             appInfo.setApp_name(app_name);
 
             //获取应用的包名
-            String packageName = info.packageName;
-            appInfo.setPackagename(packageName);
-            try {
-                //获取应用的版本号
-                PackageInfo packageInfo = pm.getPackageInfo(packageName, 0);
-                String app_version = packageInfo.versionName;
-                appInfo.setApp_version(app_version);
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
+//            String packageName = info.packageName;
+//            appInfo.setPackagename(packageName);
+//            try {
+//                //获取应用的版本号
+//                PackageInfo packageInfo = pm.getPackageInfo(packageName, 0);
+//                String app_version = packageInfo.versionName;
+//                appInfo.setApp_version(app_version);
+//            } catch (PackageManager.NameNotFoundException e) {
+//                e.printStackTrace();
+//            }
         System.out.println("=====================>应用"+ app_name);
             arrayList.add(app_name);
 //            if(app_name.equals(appName)){
 //                heshi=false;
 //                break;
 //            }
+
         }
         return arrayList;
 
