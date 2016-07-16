@@ -105,12 +105,13 @@ public class MainActivity extends AppCompatActivity {
                     switch (setup){
                         case 1:
                             if(app.pipei(name)) {
+
                             Intent intent = new Intent(MainActivity.this, DownloadService.class);
                             intent.setAction(DownloadService.ACTION_SARET);
                             intent.putExtra("fileInfo", fileInfo);
                             intent.putExtra("MD5", pos);
                             System.out.println("");
-                            download.setText("下载中");
+//                                download.setText("暂停");
                             setup = setup * -1;
                             startService(intent);//点击下载
                         }
@@ -125,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
                             setup = setup * -1;
                             System.out.println("点击暂停下载");
                             startService(intent2);
-                            download.setText("继续下载");
+                            download.setText("继续");
+
 
                             break;
                         case 2:
@@ -161,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 int  finish=intent.getIntExtra("finished",0);
                 System.out.println("--------------------》正在接受返回Activite信息");
                 download.setProgress(finish);
+                download.setText("暂停");
                 System.out.println("======================>下载量"+finish);
 
             }
