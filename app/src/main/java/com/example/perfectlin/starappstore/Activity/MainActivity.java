@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if(DownloadService.ACTION_STOP.equals(intent.getAction())){
 //                setup=setup * -1;
-                //123
+
             }
 
         }
