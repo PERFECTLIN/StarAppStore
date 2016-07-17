@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     AppInfoService app=null;
     private  String pipei_name;
     private int pipri_pos;
-
+//123
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
